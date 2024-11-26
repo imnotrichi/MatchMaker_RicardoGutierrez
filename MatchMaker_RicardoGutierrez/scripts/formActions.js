@@ -40,7 +40,8 @@ window.onload = function() {
     }
 
     llenarNacionalidad();
-    form[0].onsubmit = enviar;
+    //form[0].onsubmit = enviar;
+    form[0].onsubmit = enviar2;
 }
 
 function llenarNacionalidad() {
@@ -100,4 +101,30 @@ function enviar(evento) {
     const genero = obtenerGenero();
 
     window.location.href = `its-a-match.html?nac=${nacionalidad.value}&genero=${genero}`;
+}
+
+function enviar2(evento) {
+    evento.preventDefault();
+
+    const nac = document.getElementById("nationality");
+    const genero = obtenerGenero();
+
+    const request = new Request(
+        `https://randomuser.me/api/?nat=${nac}&gender=${genero}`, 
+        {
+            method: 'get',
+            headers: new Headers({
+                "Content-Type": "application/json"
+            })
+        }
+    );
+
+    fetch(request).then(function(response){
+        return response.json();
+    }).then(function(data){
+        localStorage.setItem("matchInfo", JSON.stringify(data.results[0]));
+        window.location.href = "its-a-match.html";
+    }).catch(function(error){
+        alert("Hubo un error encontrando a tu otra mitad :(");
+    })
 }
